@@ -5,4 +5,6 @@ typedef struct nominal
     int appearances;
     double deviation;
     int nr_words;
+    int nr_emails;
+    int *email_no;
 } words;

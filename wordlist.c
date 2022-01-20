@@ -10,7 +10,7 @@ void debug(words **output, int i)
 	printf("%d~~%s %d\n", i, (*output)[i].keyword, (*output)[i].appearances);
 }
 
-void verify_email(words **output)
+void verify_email(words **output, int **emails_size)
 {
 	FILE *keywords_file = fopen("/home/student/Documents/BALIZA/data/keywords", "r");
 	if (!keywords_file)
@@ -20,7 +20,7 @@ void verify_email(words **output)
 	}
 	char *str;
 	str = malloc(BUFF_SIZE * sizeof(char));
-	if (str == NULL)
+	if (!str)
 	{
 		printf("Cant alloc memory");
 		exit(EXIT_FAILURE);
@@ -43,10 +43,10 @@ void verify_email(words **output)
 			str[strlen(str) - 1] = '\0';
 
 		(*output)[i].keyword = malloc(BUFF_SIZE * sizeof(char));
-		if ((*output)[i].keyword == NULL)
+		if (!((*output)[i].keyword))
 		{
-			printf("Cant alloc memory");
-			free(output);
+			printf("Cant alloc memory\n");
+			free(*output);
 			exit(EXIT_FAILURE);
 		}
 		strcpy((*output)[i].keyword, str);
@@ -54,12 +54,13 @@ void verify_email(words **output)
 		(*output)[i].appearances = 0;
 		(*output)[i].deviation = 0;
 		(*output)[i].nr_words = nr_keywords;
+
 		//debug(output, i);
 	}
 
 	for (int i = 0; i < nr_keywords; i++)
 	{
-		open_directory(output, i);
+		open_directory(output, i, emails_size);
 	}
 	free(str);
 	fclose(keywords_file);

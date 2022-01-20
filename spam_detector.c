@@ -7,8 +7,10 @@
 int main(void)
 {
 	words *output;
-	verify_email(&output);
+	int *emails_size;
+	verify_email(&output, &emails_size);
 	generate_output(&output);
-	free_struct(&output);
+	generate_score(&output, &emails_size);
+	free_struct(&output, &emails_size);
 	return 0;
 }

@@ -8,7 +8,7 @@ TARGET=spam_detector
 
 build: $(TARGET)
 
-spam_detector: spam_detector.o directory.o wordlist.o count_word.o output.o
+spam_detector: spam_detector.o directory.o wordlist.o count_word.o output.o score.c
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 
 %.o: %.c
