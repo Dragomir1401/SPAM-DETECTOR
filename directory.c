@@ -10,7 +10,8 @@
 #include "headers.h"
 #define _GNU_SOURCE
 #define _BSD_SOURCE
-void open_directory(words **output, int index, int **emails_size)
+
+void open_directory_alloc(words **output, int **emails_size, int **caps_size, int **email_chars, double **spammer)
 {
 	int number_files = 0;
 	struct dirent *res;
@@ -52,10 +53,20 @@ void open_directory(words **output, int index, int **emails_size)
 	}
 
 	(*output)[0].nr_emails = number_files;
-	(*output)[index].email_no = malloc((*output)[0].nr_emails * sizeof(int));
 	*emails_size = malloc((*output)[0].nr_emails * sizeof(int));
+	*caps_size = malloc((*output)[0].nr_emails * sizeof(int));
+	*email_chars = malloc((*output)[0].nr_emails * sizeof(int));
+	*spammer = malloc((*output)[0].nr_emails * sizeof(double));
+}
 
+void open_directory(words **output, int index, int **emails_size, int **caps_size, int **email_chars, double **spammer)
+{
 	int index_email = 0;
+	struct dirent *res;
+	struct stat sb;
+	const char *path = "/home/student/Documents/BALIZA/data/emails/";
+
+	(*output)[index].email_no = malloc((*output)[0].nr_emails * sizeof(int));
 
 	if (stat(path, &sb) == 0 && S_ISDIR(sb.st_mode))
 	{
@@ -73,7 +84,7 @@ void open_directory(words **output, int index, int **emails_size)
 						//verify_email(res->d_name, output);
 						(*output)[index].email_no[index_email] = 0;
 						count_word(res->d_name, output, index, index_email);
-						compute_emails_size(res->d_name, index_email, emails_size);
+						compute_emails_size(res->d_name, index_email, emails_size, caps_size, email_chars, spammer);
 						index_email++;
 					}
 				}
