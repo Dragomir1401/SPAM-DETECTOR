@@ -76,24 +76,22 @@ double isspammer(char *sender)
 	{
 		while (fgets(strr, BUFF_SIZE, spammers_file))
 		{
-			char *token;
+			char *token1;
 			int nr_token = 0;
 			/* get the first token */
-			token = strtok(strr, " ");
+			token1 = strtok(strr, " ");
 
 			/* walk through other tokens */
-			while (token)
+			while (token1)
 			{
 				if (nr_token == 0)
-					strcpy(spammer_name, token);
+					strcpy(spammer_name, token1);
 				else if (nr_token == 1)
-					strcpy(spammer_score, token);
-				token = strtok(NULL, " ");
+					strcpy(spammer_score, token1);
 				nr_token++;
+				token1 = strtok(NULL, " ");
 			}
 		}
-
-		score = atoi(spammer_score);
 
 		if (strstr(sender, spammer_name))
 		{
@@ -102,20 +100,21 @@ double isspammer(char *sender)
 		}
 	}
 
-	free(strr);
 	free(spammer_name);
 	free(spammer_score);
+	free(strr);
+	fclose(spammers_file);
 	if (found)
 		return score;
 	else
 		return 0;
 }
-void free_struct(words **output, int *emails_size, int *caps_size, int *emails_chars, int *spammer)
+void free_struct(words **output, int **emails_size, int **caps_size, int **emails_chars, double **spammer)
 {
-	free(emails_size);
-	free(caps_size);
-	free(emails_chars);
-	free(spammer);
+	free(*emails_size);
+	free(*caps_size);
+	free(*emails_chars);
+	free(*spammer);
 
 	for (int i = 0; i < output[0]->nr_words; i++)
 	{
