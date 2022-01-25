@@ -10,7 +10,7 @@ void debug(words **output, int i)
 	printf("%d~~%s %d\n", i, (*output)[i].keyword, (*output)[i].appearances);
 }
 
-void verify_email(words **output, int **emails_size, int **caps_size, int **email_chars, double **spammer)
+void verify_email(words **output, int **emails_size, int **caps_size, int **email_chars, int **spammer)
 {
 	FILE *keywords_file = fopen("/home/student/Documents/BALIZA/data/keywords", "r");
 	if (!keywords_file)
@@ -59,11 +59,13 @@ void verify_email(words **output, int **emails_size, int **caps_size, int **emai
 	}
 
 	open_directory_alloc(output, emails_size, caps_size, email_chars, spammer);
-
 	for (int i = 0; i < nr_keywords; i++)
 	{
-		open_directory(output, i, emails_size, caps_size, email_chars, spammer);
+
+		count_keywords(output, i);
 	}
+
+	open_directory(emails_size, caps_size, email_chars, spammer);
 	free(str);
 	fclose(keywords_file);
 }

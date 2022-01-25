@@ -7,7 +7,7 @@ int main(void)
 {
 	words *output;
 	int *emails_size, *caps_size, *email_chars;
-	double *spammer;
+	int *spammer;
 	verify_email(&output, &emails_size, &caps_size, &email_chars, &spammer);
 	generate_output(&output);
 	generate_score(&output, &emails_size, &caps_size, &email_chars, &spammer);
