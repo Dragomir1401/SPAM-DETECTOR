@@ -184,7 +184,7 @@ void compute_emails_size(char *email_name, int index_email, int **emails_size,
 						//	printf("%c ", str[i]);
 						nr_caps++;
 					}
-				} else if (str[i] != '\n') {
+				} else if (str[i] != '\n' && str[i] != '-') {
 					nr_punc++;
 				}
 			}

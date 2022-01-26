@@ -13,6 +13,13 @@ int main(void)
 	generate_output(&output);
 	generate_score(&output, &emails_size, &caps_size, &email_chars,
 				   &spammer, &email_punc, &max_newline);
+	for (int i = 0; i < output[0].nr_words; i++)
+		printf("Total appereances for keyword %s: %d\n",
+			   output[i].more_keywords, output[i].new_appereances);
+	printf("\n");
+	for (int i = 0; i < output[0].nr_words; i++)
+		printf("Total appereances for keyword %s: %d\n",
+			   output[i].keyword, output[i].appearances);
 	free_struct(&output, &emails_size, &caps_size, &email_chars,
 				&spammer, &email_punc, &max_newline);
 	return 0;

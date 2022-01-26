@@ -57,7 +57,7 @@ void verify_email(words **output, int **emails_size, int **caps_size,
 	}
 
 	FILE *more_keywords_file =
-						fopen("data/more_keywords",
+						fopen("more_keywords",
 							  "r");
 	if (!more_keywords_file) {
 		printf("Failed to load Keywords.\n");
@@ -77,6 +77,8 @@ void verify_email(words **output, int **emails_size, int **caps_size,
 			exit(EXIT_FAILURE);
 		}
 		strcpy((*output)[i].more_keywords, str);
+
+		(*output)[i].new_appereances = 0;
 	}
 
 	open_directory_alloc(output, emails_size, caps_size, email_chars, spammer,

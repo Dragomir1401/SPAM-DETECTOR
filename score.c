@@ -11,15 +11,18 @@ double keywords_score(words **output, int **emails_size, int mail_index)
 {
 	double score = 0;
 	int total_keywords = 0;
+	int new_keywords = 0;
 	double avg = average_email_size(output, emails_size);
 	printf("Average email size is:%f\n", avg);
 	//if (avg / (*emails_size)[mail_index] < 8) {
 	for (int i = 0; i < output[0]->nr_words; i++) {
-		score += (avg / (*emails_size)[mail_index]) *
+		if ((*emails_size)[mail_index] > 50)
+			score += (avg / (*emails_size)[mail_index]) *
 				 (*output)[i].email_no[mail_index];
-		// score += (avg / (*emails_size)[mail_index]) *
-		//		 (*output)[i].more_email_no[mail_index];
+		score += (avg / (*emails_size)[mail_index]) *
+			(*output)[i].more_email_no[mail_index];
 		total_keywords += (*output)[i].email_no[mail_index];
+		new_keywords += (*output)[i].more_email_no[mail_index];
 	}
 	// } else {
 	//	for (int i = 0; i < output[0]->nr_words; i++) {
@@ -29,6 +32,7 @@ double keywords_score(words **output, int **emails_size, int mail_index)
 	// }
 
 	printf("Nr keywords in mail:%d\n", total_keywords);
+	printf("Nr of new keywords in mail:%d\n", new_keywords);
 	return score;
 }
 

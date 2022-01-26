@@ -65,9 +65,9 @@ void count_word(char *email_name, words **output, int index, int index_email)
 			if (step > 3)
 				while (p) {
 					(*output)[index].more_email_no[index_email]++;
-
-					p += strlen((*output)[index].keyword);
-					p = strstr(p, (*output)[index].keyword);
+					(*output)[index].new_appereances++;
+					p += strlen((*output)[index].more_keywords);
+					p = strstr(p, (*output)[index].more_keywords);
 				}
 			token = strtok(NULL, " ");
 		}
