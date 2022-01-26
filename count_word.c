@@ -24,26 +24,23 @@ void tolower_string(char *string)
 
 void count_word(char *email_name, words **output, int index, int index_email)
 {
-	char source[MAX_SOURCE] = "/home/student/Documents/BALIZA/data/emails/";
+	char source[MAX_SOURCE] = "data/emails/";
 	strcat(source, email_name);
 
 	FILE *email_file = fopen(source, "r");
-	if (!email_file)
-	{
+	if (!email_file) {
 		printf("Failed to load an Email.\n");
 		exit(EXIT_FAILURE);
 	}
 
 	char *str;
 	str = malloc(BUFF_SIZE);
-	if (!str)
-	{
+	if (!str) {
 		printf("Cant alloc memory");
 		exit(EXIT_FAILURE);
 	}
 	int step = 0;
-	while (fgets(str, BUFF_SIZE, email_file))
-	{
+	while (fgets(str, BUFF_SIZE, email_file)) {
 		step++;
 		char *token;
 
@@ -52,21 +49,26 @@ void count_word(char *email_name, words **output, int index, int index_email)
 		if (isupper_string(token))
 			tolower_string(token);
 		/* walk through other tokens */
-		while (token)
-		{
+		while (token) {
 			if (isupper_string(token))
 				tolower_string(token);
-
-			if (strstr(token, (*output)[index].keyword))
-				if (step > 3)
-				{
+			char *p = strstr(token, (*output)[index].keyword);
+			if (step > 3)
+				while (p) {
 					(*output)[index].appearances++;
 					(*output)[index].email_no[index_email]++;
+
+					p += strlen((*output)[index].keyword);
+					p = strstr(p, (*output)[index].keyword);
 				}
+			p = strstr(token, (*output)[index].more_keywords);
+			if (step > 3)
+				while (p) {
+					(*output)[index].more_email_no[index_email]++;
 
-			// if (strstr(token, "buy") && !strcmp((*output)[index].keyword, "buy"))
-			//     printf("%s\n", token);
-
+					p += strlen((*output)[index].keyword);
+					p = strstr(p, (*output)[index].keyword);
+				}
 			token = strtok(NULL, " ");
 		}
 	}

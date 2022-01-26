@@ -21,7 +21,8 @@ void compute_deviation(words **output, int index)
 	double sum = 0;
 	double avr = average(output, index);
 	for (int i = 0; i < output[0]->nr_emails; i++)
-		sum += ((*output)[index].email_no[i] - avr) * ((*output)[index].email_no[i] - avr);
+		sum += ((*output)[index].email_no[i] - avr) *
+			   ((*output)[index].email_no[i] - avr);
 	sum /= output[0]->nr_emails;
 	sum = sqrt(sum);
 	(*output)[index].deviation = sum;
@@ -30,13 +31,11 @@ void compute_deviation(words **output, int index)
 void generate_output(words **output)
 {
 	FILE *statistics_file = fopen("statistics.out", "w");
-	if (!statistics_file)
-	{
+	if (!statistics_file) {
 		printf("Failed to load Statistics.\n");
 		exit(EXIT_FAILURE);
 	}
-	for (int i = 0; i < output[0]->nr_words; i++)
-	{
+	for (int i = 0; i < output[0]->nr_words; i++) {
 		fputs((*output)[i].keyword, statistics_file);
 		fprintf(statistics_file, " %d", (*output)[i].appearances);
 		compute_deviation(output, i);
@@ -53,10 +52,9 @@ int isspammer(char *sender, char *str)
 		sender1[i] = sender[i];
 	sender1[strlen(sender)] = '\0';
 
-	char source[MAX_SOURCE] = "/home/student/Documents/BALIZA/data/spammers";
+	char source[MAX_SOURCE] = "data/spammers";
 	FILE *spammers_file = fopen(source, "r");
-	if (!spammers_file)
-	{
+	if (!spammers_file) {
 		printf("Failed to load an Spammers text.\n");
 		exit(EXIT_FAILURE);
 	}
@@ -78,26 +76,22 @@ int isspammer(char *sender, char *str)
 	//	exit(EXIT_FAILURE);
 	// }
 
-	for (int i = 0; i < nr_spammers + 1; i++)
-	{
+	for (int i = 0; i < nr_spammers + 1; i++) {
 		fgets(str, BUFF_SIZE, spammers_file);
 		//printf("%s", str);
 		//printf("%s", str);
 		//printf("%s\n", str);
-		if (i)
-		{
+		if (i) {
 			char *token1;
 			int nr_token = 0;
 			/* get the first token */
 			token1 = strtok(str, " ");
 
 			/* walk through other tokens */
-			while (token1)
-			{
-				if (nr_token == 0)
+			while (token1) {
+				if (nr_token == 0) {
 					strcpy(spammer_name, token1);
-				else if (nr_token == 1)
-				{
+				} else if (nr_token == 1) {
 					strcpy(spammer_score, token1);
 					spammer_score[strlen(spammer_score) - 1] = '\0';
 				}
@@ -107,8 +101,7 @@ int isspammer(char *sender, char *str)
 			}
 			//printf("%s\n", sender1);
 			//printf("%s~~%s\n", spammer_name, spammer_score);
-			if (strstr(sender1, spammer_name))
-			{
+			if (strstr(sender1, spammer_name)) {
 				found = 1;
 				score = atoi(spammer_score);
 			}
@@ -125,59 +118,74 @@ int isspammer(char *sender, char *str)
 		return 0;
 }
 
-void free_struct(words **output, int **emails_size, int **caps_size, int **emails_chars, int **spammer)
+void free_struct(words **output, int **emails_size, int **caps_size,
+				 int **emails_chars, int **spammer, int **email_punc,
+				 int **max_newline)
 {
 	free(*emails_size);
 	free(*caps_size);
 	free(*emails_chars);
 	free(*spammer);
-
-	for (int i = 0; i < output[0]->nr_words; i++)
-	{
+	free(*email_punc);
+	free(*max_newline);
+	for (int i = 0; i < output[0]->nr_words; i++) {
 		free((*output)[i].keyword);
 		free((*output)[i].email_no);
+		free((*output)[i].more_keywords);
+		free((*output)[i].more_email_no);
 	}
 	free(*output);
 }
 
-void compute_emails_size(char *email_name, int index_email, int **emails_size, int **caps_size, int **email_chars, int **spammer)
+void compute_emails_size(char *email_name, int index_email, int **emails_size,
+						 int **caps_size, int **email_chars, int **spammer,
+						 int **email_punc, int **max_newline)
 {
-	char source[MAX_SOURCE] = "/home/student/Documents/BALIZA/data/emails/";
+	char source[MAX_SOURCE] = "data/emails/";
 	strcat(source, email_name);
 
 	//printf("%d\n", index_email);
 
 	FILE *email_file = fopen(source, "r");
-	if (!email_file)
-	{
+	if (!email_file) {
 		printf("Failed to load an Email.\n");
 		exit(EXIT_FAILURE);
 	}
 
-	int step = 0, nr_words = 0, nr_caps = 0, nr_chars = 0;
+	int step = 0, nr_words = 0, nr_caps = 0, nr_chars = 0, nr_punc = 0;
 	char *str;
 	str = malloc(BUFF_SIZE);
-	if (!str)
-	{
+	if (!str) {
 		printf("Cant alloc memory");
 		exit(EXIT_FAILURE);
 	}
 
-	while (fgets(str, BUFF_SIZE, email_file))
-	{
+	int streak = 0, max = 0;
+	while (fgets(str, BUFF_SIZE, email_file)) {
 		step++;
 		char *token;
+		if (!strcmp(str, "\n") && step > 3)
+			streak++;
+		else
+			streak = 0;
+		if (streak > max) {
+			max = streak;
+			streak = 0;
+		}
 
-		if (step > 3)
-		{
-			for (size_t i = 0; i < strlen(str); i++)
-			{
-				nr_chars++;
-				if (isupper(str[i]))
-				{
-					// if (!strcmp(email_name, "1"))
-					//	printf("%c ", str[i]);
-					nr_caps++;
+		if (step > 3) {
+			for (size_t i = 0; i < strlen(str); i++) {
+				if (str[i] != '\n' && str[i] != ' ' && str[i] != '<' &&
+					str[i] != '>' && str[i] != ':' && str[i] != ';' &&
+					str[i] != '!' && str[i] != '?') {
+					nr_chars++;
+					if (isupper(str[i])) {
+						// if (!strcmp(email_name, "1"))
+						//	printf("%c ", str[i]);
+						nr_caps++;
+					}
+				} else if (str[i] != '\n') {
+					nr_punc++;
 				}
 			}
 		}
@@ -191,25 +199,22 @@ void compute_emails_size(char *email_name, int index_email, int **emails_size, i
 		else
 			token = NULL;
 		/* walk through other tokens */
-		while (token)
-		{
-			if (step == 3)
-			{
+		while (token) {
+			if (step == 3) {
 				if (strstr(token, "@"))
 					(*spammer)[index_email] = isspammer(token, str);
 			}
 			if (step > 3)
-			{
 				nr_words++;
-			}
 			token = strtok(NULL, " ");
 		}
 	}
 
+	(*max_newline)[index_email] = max;
 	(*emails_size)[index_email] = nr_words;
 	(*caps_size)[index_email] = nr_caps;
 	(*email_chars)[index_email] = nr_chars;
-
+	(*email_punc)[index_email] = nr_punc;
 	free(str);
 	fclose(email_file);
 }
