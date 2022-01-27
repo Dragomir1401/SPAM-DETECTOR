@@ -1,9 +1,60 @@
-daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-afsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
-qdwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-fqwwwwwwwwwwvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-qwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-vqsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss
-daaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafas
-dsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-daaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++---------------------------------------+
+|                                       |
+|                                       |
+|       Copyright Dragomir Andrei       |
+|                312 CA                 |
+|                                       |
+|                                       |
++---------------------------------------+
+
+MAXIMUM LOCAL F1 SCORE WAS 84.94 AND FINAL SUBMISSION HAD A SCORE OF 83.8
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~Description~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    This project is basically a checker for spam emails considering different
+formulas and different standards.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Tasks~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+~~~TASK_1~~~
+    We have to calculate standard deviation from the average for keywords
+appereances in each email given.
+~~~TASK_2~~~
+    We have to tell if an email is spam based on 3 categories of score:
+1. Score based on how many keywords that email contains
+2. Score based on if the email contains more than half uppercases in the body
+3. Score if the email is sent from an address which is known as ussually spam
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~How to run it~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+make && ./spam_detector
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Implementation~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    General implementation is based on two structures which hold information
+for initial keywords and additional keywords to make score better.
+
+    First task is implemented by iterating through each email in the emails
+directory and counting each appereance of each keyword. We need total
+appereances and as well as apperenaces per mail to calculate deviation from
+the average appereances.
+
+    stdev = sqrt((1 / n) * sum((v[i] - average) ^ 2))
+
+    Second tasks is implemented using a number of array which store values 
+of number of characters, number of uppercases, number on new line in a maximum
+streak, number of words, spammer information for a given email. We use the
+information stored to calculate final score. If score exceeds limit of 35
+we may consider that email as a spam.
+
+keywordsScore(mail,keys) = ∑ count(mail, keyword) * (avgSize / len(mail.body))
+
+hasCaps(mail) = (capsCount(mail.body) > 1/2 ∗ len(mail.body)) ? 1 : 0
+
+spammer(mail) = scorul din fisierul spammers pentru adresa de email (mail.from).
+
+
+score(mail) = 10∗keywordsScore(mail, kwords) + 30∗hasCaps(mail) + spammers(mail)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -5,22 +5,22 @@
 #include "headers.h"
 int main(void)
 {
+	// Declare structures to store initial keywords and added keywords
 	words *output;
+	new_words *added;
+	// Declare arrays needed for keeping track of different measurements
 	int *emails_size, *caps_size, *email_chars, *email_punc;
 	int *spammer, *max_newline;
+	// Call function that sets up output
 	verify_email(&output, &emails_size, &caps_size, &email_chars,
-				 &spammer, &email_punc, &max_newline);
+				 &spammer, &email_punc, &max_newline, &added);
+	// Call function that generates output for task 1
 	generate_output(&output);
-	generate_score(&output, &emails_size, &caps_size, &email_chars,
-				   &spammer, &email_punc, &max_newline);
-	for (int i = 0; i < output[0].nr_words; i++)
-		printf("Total appereances for keyword %s: %d\n",
-			   output[i].more_keywords, output[i].new_appereances);
-	printf("\n");
-	for (int i = 0; i < output[0].nr_words; i++)
-		printf("Total appereances for keyword %s: %d\n",
-			   output[i].keyword, output[i].appearances);
+	// Call function that generates score for task 2
+	generate_score(&output, &caps_size, &email_chars,
+				   &spammer, &email_punc, &max_newline, &added);
+	// Call global free function
 	free_struct(&output, &emails_size, &caps_size, &email_chars,
-				&spammer, &email_punc, &max_newline);
+				&spammer, &email_punc, &max_newline, &added);
 	return 0;
 }
